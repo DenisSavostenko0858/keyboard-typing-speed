@@ -13,12 +13,17 @@
         </div>
         <div class="container-middle">
             <input type="text" value="" class="input-value-text" placeholder="Начать..">
-            <textarea name="" class="text-generated">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi animi illum porro eligendi voluptas dolorem. Consequuntur, provident dignissimos corrupti accusantium ullam quisquam laudantium nemo animi. Dolores perferendis ipsam illum quia. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi animi illum porro eligendi voluptas dolorem. Consequuntur, provident dignissimos corrupt</textarea>
+            <input name="" class="text-generated" value="<%=generatedText%>">
         </div>
         <div class="container-footer">
-            <a type="submit" class="btn" href="">повторить</a>
-            <input class="btn" value="количество символов: ">
-            <input type="submit" class="btn" value="ошибки: ">
+            <div class="container">
+                <a type="submit" class="btn" href="/">Изменить</a>
+                <a type="submit" class="btn" href="" style="margin-left: 20px;">Заново</a>
+            </div>
+            <div class="container">
+                <input class="btn" style="width: 200px;" value="Количество символов: ">
+                <input class="btn" style="margin-left: 20px;" value="Ошибки: ">
+            </div>
         </div>
     </div>
 </body>
