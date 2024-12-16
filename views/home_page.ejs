@@ -12,8 +12,12 @@
             <div class="h-titile">Keyboard Typing Speed ... |</div>
         </div>
         <div class="container-middle">
+            <div class="timer">
+                <h2 id="timer"></h2>
+            </div>
+            <h2 id="res" style="display: none;">Победа!!!</h2>
             <input type="text" value="" class="input-value-text" placeholder="Начать..">
-            <input name="" class="text-generated" value="<%=generatedText%>">
+            <textarea name="" class="text-generated" id=""><%=generatedText%></textarea>
         </div>
         <div class="container-footer">
             <div class="container">
@@ -21,38 +25,58 @@
                 <input type="submit" class="btn" id="clear-btn" value="Заново" style="margin-left: 20px;">
             </div>
             <div class="container">
-                <input class="btn" style="width: 200px;" value="Количество символов: ">
+                <input class="btn" id="length" style="width: 200px;" value="Количество символов: ">
                 <input class="btn" style="margin-left: 20px;" value="Ошибки: ">
             </div>
         </div>
     </div>
 </body>
 <script>
+    // Проверка текста
+    const timer = document.getElementById("timer"); // Исправить точность времяни
+    let time = new Date(); 
+    
     // Очистка поля ввода
     const clearBtn = document.querySelector('#clear-btn');
-
-    function clear () {
-        document.querySelector('.input-value-text').value = '';
-    }
-
-    clearBtn.addEventListener('click', clear);
-
-    // Проверка текста
-    function checkText () {
-        const inputText = document.querySelector('.input-value-text').value;
-        const generatedText = document.querySelector('.text-generated').value;
     
-        if(!inputText == ''){
-            
-        }
-        
-        if( inputText === generatedText){
-            console.log("Ура победа")
-        } else {
-            console.log("Ох блинн")
-        }
+    function clear() {
+        document.querySelector('.input-value-text').value = '';
+        time = new Date();
     }
+    
+    clearBtn.addEventListener('click', clear);
+    
+function updateTime() {
+    const now = new Date();
+    const res = now.getSeconds() - time.getSeconds();
+    timer.textContent = res + " c";
+}
 
-    setInterval(checkText, 1000);
+let timerId = setInterval(updateTime, 1000);
+
+function checkText() {
+    const inputTextCheck = document.querySelector('.input-value-text').value;
+    const generatedTextCheck = document.querySelector('.text-generated').value;
+
+    console.log(inputTextCheck.length)
+    const textLenght = document.querySelector('#length');
+    textLenght.value = "Количество символов: " + inputTextCheck.length
+
+    if (inputTextCheck === generatedTextCheck) {
+        const inputTextElement = document.querySelector('.input-value-text');
+        const res = document.getElementById('res');
+
+        res.style.display = 'block';
+        inputTextElement.style.display = 'none';
+
+        console.log("Ура победа");
+        clearInterval(timerId); // Останавливаем таймер 
+    } else {
+        console.log("Ох блинн");
+    }
+}
+
+setInterval(checkText, 1000);
+
 </script>
 </html>
