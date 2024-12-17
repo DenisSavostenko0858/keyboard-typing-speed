@@ -13,70 +13,114 @@
         </div>
         <div class="container-middle">
             <div class="timer">
+                <h2 id="res" style="display: none; color: gray; margin-right: 10px;">Отлично, ваш результат: </h2>
                 <h2 id="timer"></h2>
             </div>
-            <h2 id="res" style="display: none;">Победа!!!</h2>
             <input type="text" value="" class="input-value-text" placeholder="Начать..">
-            <textarea name="" class="text-generated" id=""><%=generatedText%></textarea>
+            <textarea style="display: none;" class="text-generated"><%=generatedText%></textarea>
+            <div class="text-generated"><%=generatedText%></div>
+            <div id="error-display"></div>
         </div>
         <div class="container-footer">
             <div class="container">
                 <a type="submit" class="btn" href="/">Изменить</a>
                 <input type="submit" class="btn" id="clear-btn" value="Заново" style="margin-left: 20px;">
+                <div class="btn" id="wpm" style="margin-left: 20px;">WPM: 0</div>
             </div>
             <div class="container">
-                <input class="btn" id="length" style="width: 200px;" value="Количество символов: ">
-                <input class="btn" style="margin-left: 20px;" value="Ошибки: ">
+                <input class="btn" id="length" style="width: 220px;" value="Количество символов: ">
+                <div id="error-count" class="btn" style="margin-left: 20px;">Ошибки: 0</div>
             </div>
         </div>
     </div>
 </body>
-<script>
-    // Проверка текста
-    const timer = document.getElementById("timer"); // Исправить точность времяни
+<script>    
+    // Таймер
+    const timer = document.getElementById("timer"); 
     let time = new Date(); 
     
-    // Очистка поля ввода
-    const clearBtn = document.querySelector('#clear-btn');
+    function updateTime() {
+        const now = new Date().getSeconds();
+        const resultTime = now - time.getSeconds();
+        timer.textContent = resultTime + " c";
+    }
     
+    let timerId = setInterval(updateTime, 500);
+    
+    // Очистка полей ввода
     function clear() {
         document.querySelector('.input-value-text').value = '';
+        document.getElementById('error-display').innerHTML = ''; 
+        document.getElementById('error-count').textContent = 'Ошибки: 0'; 
+        document.getElementById('wpm').textContent = 'WPM: 0';
         time = new Date();
     }
-    
+        
+    const clearBtn = document.querySelector('#clear-btn');
     clearBtn.addEventListener('click', clear);
     
-function updateTime() {
-    const now = new Date();
-    const res = now.getSeconds() - time.getSeconds();
-    timer.textContent = res + " c";
-}
-
-let timerId = setInterval(updateTime, 1000);
-
-function checkText() {
-    const inputTextCheck = document.querySelector('.input-value-text').value;
-    const generatedTextCheck = document.querySelector('.text-generated').value;
-
-    console.log(inputTextCheck.length)
-    const textLenght = document.querySelector('#length');
-    textLenght.value = "Количество символов: " + inputTextCheck.length
-
-    if (inputTextCheck === generatedTextCheck) {
-        const inputTextElement = document.querySelector('.input-value-text');
-        const res = document.getElementById('res');
-
-        res.style.display = 'block';
-        inputTextElement.style.display = 'none';
-
-        console.log("Ура победа");
-        clearInterval(timerId); // Останавливаем таймер 
-    } else {
-        console.log("Ох блинн");
+    // Запуск таймера для вычеслений WPM
+    let start;
+    function startTimer() {
+        start = new Date().getSeconds();
     }
-}
-
-setInterval(checkText, 1000);
-
-</script>
+    
+    // Проверка текста
+    function checkText() {
+        const inputTextCheck = document.querySelector('.input-value-text').value;
+        const generatedTextCheck = document.querySelector('.text-generated').value;
+    
+        const textLength = document.querySelector('#length');
+        textLength.value = "Количество символов: " + inputTextCheck.length;
+    
+        const errorDisplay = document.getElementById('error-display');
+        const errorCountDisplay = document.getElementById('error-count');
+        const wpmCountDisplay = document.getElementById('wpm');
+    
+        // Очистка предыдущих ошибок
+        errorDisplay.innerHTML = '';
+    
+        let errorCount = 0;
+        let highlightedText = '';
+        let maxLength = Math.max(inputTextCheck.length, generatedTextCheck.length);
+    
+        for (let i = 0; i < maxLength; i++) {
+            const inputChar = inputTextCheck[i] || '';
+            const generatedChar = generatedTextCheck[i] || '';
+    
+            if (inputChar === generatedChar) {
+                highlightedText += inputChar;
+            } else {
+                highlightedText += `<span style="color: red;">${inputChar}</span>`;
+                errorCount++; 
+            }
+        }
+    
+        errorDisplay.innerHTML = highlightedText;
+        errorCountDisplay.textContent = 'Ошибки/Осталось букв: ' + errorCount;
+    
+        if (inputTextCheck === generatedTextCheck) {
+            const inputTextElement = document.querySelector('.input-value-text');
+            const res = document.getElementById('res');
+    
+            res.style.display = 'block';
+            inputTextElement.style.display = 'none';
+    
+            const end = new Date().getSeconds();
+            const resultTime = end - start;
+    
+            const resultWpm = (inputTextCheck.length / resultTime) * 60; // Подсчет WPM 
+            wpmCountDisplay.textContent = 'WPM: ' + resultWpm.toFixed(2); // Формат. до двух знаков после запятой
+    
+            clearInterval(checkId);
+            clearInterval(timerId);
+        }
+    }
+    
+    // Запуск таймера при начале ввода текста
+    const inputField = document.querySelector('.input-value-text');
+    inputField.addEventListener('focus', startTimer);
+    
+    let checkId = setInterval(checkText, 500);
+</script>    
 </html>
